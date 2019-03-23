@@ -162,7 +162,7 @@ namespace AM.Desktop.Win {
 		private WatchTimming Watch { get; set; } = new WatchTimming();
 		private CancellationTokenSource CancelToken { get; set; }
 		private ShellManager Shell { get; set; } = new ShellManager();
-		
+
 
 		private ScrollDirectionEnum ScrollDirection { get; set; } = ScrollDirectionEnum.Increment;
 		//private ICollection<MemSource> ControlViewer { get; set; }
@@ -258,38 +258,54 @@ namespace AM.Desktop.Win {
 			Stream response = Stream.Null;
 
 			try {
-				var req = (HttpWebRequest) WebRequest.Create( urlAddress );
+				await Task.Run( () => {
+					var req = (HttpWebRequest) WebRequest.Create( urlAddress );
 
-				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+					ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+					//ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11;
+					//ServicePointManager.SecurityProtocol = (SecurityProtocolType) 48 | (SecurityProtocolType) 192 | (SecurityProtocolType) 768;
 
-				req.Method = "GET";
-				req.UserAgent = ___userAgent;
-				req.AuthenticationLevel = AuthenticationLevel.None;
-				req.KeepAlive = true;
-				req.AllowAutoRedirect = true;
-				req.UseDefaultCredentials = false;
+					req.Method = "GET";
+					req.Timeout = 60000;
+					req.UserAgent = ___userAgent;
+					req.AuthenticationLevel = AuthenticationLevel.None;
+					req.KeepAlive = true;
+					req.AllowAutoRedirect = true;
+					req.UseDefaultCredentials = false;
 
-				response = ( await req.GetResponseAsync() ).GetResponseStream();
+					var resp = req.GetResponse();
+					response = resp.GetResponseStream();
+
+					//var resp = await req.GetResponseAsync();
+					//response = resp.GetResponseStream();
+				} );
 
 			} catch ( NotSupportedException nse ) {
-				var ddd = 233;
-
+				this.Shell.AddErrors( nse );
+				//MessageBox.Show( nse.Message + "| Stack: " + nse.StackTrace, "NotSupported - " + nse.Source );
 			} catch ( ArgumentNullException ane ) {
-				var ddd = 233;
-
+				this.Shell.AddErrors( ane );
+				//MessageBox.Show( ane.Message + "| Stack: " + ane.StackTrace, "ArgumentNull - " + ane.Source );
 			} catch ( SecurityException se ) {
-				var ddd = 233;
-
+				this.Shell.AddErrors( se );
+				//MessageBox.Show( se.Message + "| Stack: " + se.StackTrace, "Security - " + se.Source );
 			} catch ( UriFormatException ufe ) {
-				var ddd = 233;
-
+				this.Shell.AddErrors( ufe );
+				//MessageBox.Show( ufe.Message + "| Stack: " + ufe.StackTrace, "UriFormat - " + ufe.Source );
+			} catch ( InvalidOperationException ioe ) {
+				this.Shell.AddErrors( ioe );
+				//MessageBox.Show( "Message: " + ioe.Message + " | Data: " + ioe.TargetSite.Name + " | Stack: " + ioe.StackTrace, "InvalidOperation - " + ioe.Source );
 			} catch ( Exception ex ) {
-				var ddd = 233;
+				this.Shell.AddErrors( ex );
+				//MessageBox.Show( ex.Message + "| Stack: " + ex.StackTrace, "Exception - " + ex.Source );
 			}
 
 			this.Watch.AddHttp( begin );
 
 			return response;
+		}
+		private void RemoveToPanel ( MemSource ms ) {
+
 		}
 		private async Task InsertImageToPanel ( string sAddress, TypeSourceEnum typeSource, WallhavenThumb thumb, string keyword ) {
 			try {
@@ -371,23 +387,23 @@ namespace AM.Desktop.Win {
 								s.Controls.Add( AddLabelExist( s.Height, s.Width ) );
 
 							} catch ( UnauthorizedAccessException uaae ) {
-								var jdjdd = 32;
+								this.Shell.AddErrors( uaae );
 							} catch ( ArgumentNullException anu ) {
-								var jdjdd = 32;
+								this.Shell.AddErrors( anu );
 							} catch ( ArgumentException ae ) {
-								var jdjdd = 32;
+								this.Shell.AddErrors( ae );
 							} catch ( PathTooLongException ptle ) {
-								var jdjdd = 32;
+								this.Shell.AddErrors( ptle );
 							} catch ( DirectoryNotFoundException dnfe ) {
-								var jdjdd = 32;
+								this.Shell.AddErrors( dnfe );
 							} catch ( IOException ioe ) {
-								var jdjdd = 32;
+								this.Shell.AddErrors( ioe );
 							} catch ( NotSupportedException nse ) {
-								var jdjdd = 32;
+								this.Shell.AddErrors( nse );
 							} catch ( ExternalException ee ) {
-								var jdjdd = 32;
+								this.Shell.AddErrors( ee );
 							} catch ( Exception ex ) {
-								var jdjdd = 32;
+								this.Shell.AddErrors( ex );
 							}
 						}
 					};
@@ -417,19 +433,19 @@ namespace AM.Desktop.Win {
 				flpPictures.Controls.Add( pPic );
 
 			} catch ( FileNotFoundException ome ) {
-				var kdkdkd = 3232;
+				this.Shell.AddErrors( ome );
 			} catch ( OutOfMemoryException ome ) {
-				var kdkdkd = 3232;
+				this.Shell.AddErrors( ome );
 			} catch ( ArgumentNullException ane ) {
-				var kdkdkd = 3232;
+				this.Shell.AddErrors( ane );
 			} catch ( ObjectDisposedException ode ) {
-				var kdkdkd = 3232;
+				this.Shell.AddErrors( ode );
 			} catch ( InvalidOperationException ioe ) {
-				var kdkdkd = 3232;
+				this.Shell.AddErrors( ioe );
 			} catch ( ArgumentOutOfRangeException aore ) {
-				var kdkdkd = 3232;
+				this.Shell.AddErrors( aore );
 			} catch ( ArgumentException ane ) {
-				var kdkdkd = 3232;
+				this.Shell.AddErrors( ane );
 			}
 		}
 		private Label AddLabelExist ( int height, int width ) {
@@ -450,128 +466,143 @@ namespace AM.Desktop.Win {
 		}
 		private async Task ReviewSelectedAddress ( CancellationToken token ) {
 			if ( !this.WorkingSet ) {
-				this.WorkingSet = true;
-				this.UseWaitCursor = true;
-				this.ErrorCounter = 0;
+				try {
 
-				cbAllDirectories.Enabled = false;
-				cbNSFW.Enabled = false;
-				cbSketchy.Enabled = false;
-				cbFilterNotFound.Enabled = false;
-				cbShowDirectory.Enabled = false;
-				btNextPage.Enabled = false;
+					this.WorkingSet = true;
+					this.UseWaitCursor = true;
+					this.ErrorCounter = 0;
 
-				lbSorting.Enabled = false;
-				ddSorting.Enabled = false;
-				lbPager.Enabled = false;
-				nudPaging.Enabled = false;
-				//lstAddresses.Enabled = false;
-				clbAddresses.Enabled = false;
+					cbAllDirectories.Enabled = false;
+					cbNSFW.Enabled = false;
+					cbSketchy.Enabled = false;
+					cbFilterNotFound.Enabled = false;
+					cbShowDirectory.Enabled = false;
+					btNextPage.Enabled = false;
 
-				//lbParsing.Visible = true;
-				tspbProgress.Visible = true;
-				btCancelSeeking.Visible = true;
+					lbSorting.Enabled = false;
+					ddSorting.Enabled = false;
+					lbPager.Enabled = false;
+					nudPaging.Enabled = false;
+					//lstAddresses.Enabled = false;
+					clbAddresses.Enabled = false;
 
-				tsslMessage.Text = "";
-				tsslErrors.Text = "";
+					//lbParsing.Visible = true;
+					tspbProgress.Visible = true;
+					btCancelSeeking.Visible = true;
 
-				//var items = lstAddresses.SelectedItems;
-				var items = clbAddresses.SelectedItems;
-				var em = items.Cast<MemSource>().ToArray();
-				var bFinished = false;
+					tsslMessage.Text = "";
+					tsslErrors.Text = "";
 
-				for ( int iPaging = 0, lenPagging = (int) nudPaging.Value ; !bFinished && !token.IsCancellationRequested && iPaging < lenPagging ; iPaging++ ) {
-					foreach ( var ms in em ) {
-						if ( !token.IsCancellationRequested ) {
-							tspbProgress.Value = 0;
+					//var items = lstAddresses.SelectedItems;
+					var items = clbAddresses.SelectedItems;
+					var em = items.Cast<MemSource>().ToArray();
+					var bFinished = false;
 
-							if ( !ms.Ended && !token.IsCancellationRequested ) {
-								++ms.Index;
+					for ( int iPaging = 0, lenPagging = (int) nudPaging.Value ; !bFinished && !token.IsCancellationRequested && iPaging < lenPagging ; iPaging++ ) {
+						for ( int iMems = 0, lenMem = em.Length ; iMems < lenMem ; iMems++ ) {
+							var ms = em[iMems];
 
-								//lbParsing.Text = "Parsing: 00";
-								lbPages.Text = String.Format( "{0:00}", ms.Index );
+							if ( !token.IsCancellationRequested ) {
+								tspbProgress.Value = 0;
 
-								if ( ms.TypeSource == TypeSourceEnum.Directory ) {
-									await ShowingDirectory( ms, token );
-									bFinished = true;
+								if ( !ms.Ended && !token.IsCancellationRequested ) {
+									++ms.Index;
 
-								} else if ( ms.TypeSource == TypeSourceEnum.Wallhaven ) {
-									if ( cbShowDirectory.Checked ) {
+									//lbParsing.Text = "Parsing: 00";
+									lbPages.Text = String.Format( "{0:00}", ms.Index );
+
+									RemoveImageToPanel( ms );
+
+									if ( ms.TypeSource == TypeSourceEnum.Directory ) {
 										await ShowingDirectory( ms, token );
 										bFinished = true;
 
-									} else {
-										DropDownListItem sorting = null;
-										SortingEnum? sortingSelected = null;
+									} else if ( ms.TypeSource == TypeSourceEnum.Wallhaven ) {
+										if ( cbShowDirectory.Checked ) {
+											await ShowingDirectory( ms, token );
+											bFinished = true;
 
-										if ( ddSorting.SelectedIndex == -1
-													|| ( sorting = ddSorting.Items[ddSorting.SelectedIndex] as DropDownListItem ) != null
-															&& ( sortingSelected = (SortingEnum?) sorting.Origin ) != null ) {
+										} else {
+											DropDownListItem sorting = null;
+											SortingEnum? sortingSelected = null;
 
-											using ( var s = await GetResponseStandard(
-																	String.Format( @"https://wallhaven-api.now.sh/search?keyword={0}&page={1}", ms.Address.Replace( " ", "%20" ), ms.Index )
-																		+ ( sorting != null
-																				&& sortingSelected != null
-																				&& sortingSelected != SortingEnum.No_Assign
-																							? "&sorting=" + sortingSelected.ToString().ToLower()
-																							: "" )
+											if ( ddSorting.SelectedIndex == -1
+														|| ( sorting = ddSorting.Items[ddSorting.SelectedIndex] as DropDownListItem ) != null
+																&& ( sortingSelected = (SortingEnum?) sorting.Origin ) != null ) {
 
-																		+ ( cbSketchy.Checked ? "&sketchy=true" : "" )
-																		+ ( cbNSFW.Checked ? "&nsfw=true" : "" ) ) ) {
+												using ( var s = await GetResponseStandard(
+																		String.Format( @"https://wallhaven-api.now.sh/search?keyword={0}&page={1}", ms.Address.Replace( " ", "%20" ), ms.Index )
+																			+ ( sorting != null
+																					&& sortingSelected != null
+																					&& sortingSelected != SortingEnum.No_Assign
+																								? "&sorting=" + sortingSelected.ToString().ToLower()
+																								: "" )
 
-												var searchData = JsonConvert
-																	.DeserializeObject<WallhavenSearch>(
-																		await new StreamReader( s ).ReadToEndAsync()
-																	);
+																			+ ( cbSketchy.Checked ? "&sketchy=true" : "" )
+																			+ ( cbNSFW.Checked ? "&nsfw=true" : "" ) ) ) {
 
-												tsslMessage.Text = String.Format(
-																			"[Wallhavem]{2}Total Pages: {0} | Images: {1}",
-																			searchData.TotalPages,
-																			searchData.Images.Length,
-																			searchData.End ? " [END] " : " " );
+													var jsonData = await new StreamReader( s ).ReadToEndAsync();
 
-												DateTime begin = DateTime.UtcNow;
-												for ( int indx = 0, len = searchData.Images.Length ; !token.IsCancellationRequested && indx < len ; indx++ ) {
-													var r = searchData.Images[indx];
+													if ( !String.IsNullOrWhiteSpace( jsonData ) ) {
+														var searchData = JsonConvert.DeserializeObject<WallhavenSearch>( jsonData );
 
-													//lbParsing.Text = String.Format( "Parsing: {0:00}", len - indx );
-													tspbProgress.Value = (int) Math.Floor( 100 * (double) ( indx + 1 ) / len );
-													tsslTimming.Text = String.Format( "| {0} | Rest Time: {1}", len - indx, GetTimeRestFormatted( DateTime.UtcNow - begin, indx + 1, len ) );
+														//MessageBox.Show( jsonData, "Stream" );
 
-													await InsertImageToPanel( r.Thumb, ms.TypeSource, r, ms.Address );
+														tsslMessage.Text = String.Format(
+																					"[Wallhavem]{2}Total Pages: {0} | Images: {1}",
+																					searchData.TotalPages,
+																					searchData.Images.Length,
+																					searchData.End ? " [END] " : " " );
+
+														DateTime begin = DateTime.UtcNow;
+														for ( int indx = 0, len = searchData.Images.Length ; !token.IsCancellationRequested && indx < len ; indx++ ) {
+															var r = searchData.Images[indx];
+
+															//lbParsing.Text = String.Format( "Parsing: {0:00}", len - indx );
+															tspbProgress.Value = (int) Math.Floor( 100 * (double) ( indx + 1 ) / len );
+															tsslTimming.Text = String.Format( "| {0} | Rest Time: {1}", len - indx, GetTimeRestFormatted( DateTime.UtcNow - begin, indx + 1, len ) );
+
+															await InsertImageToPanel( r.Thumb, ms.TypeSource, r, ms.Address );
+														}
+
+														ms.Ended = searchData.End;
+													}
 												}
-
-												ms.Ended = searchData.End;
 											}
-										}
 
+										}
 									}
+
+									if ( token.IsCancellationRequested ) { --ms.Index; }
 								}
 							}
 						}
 					}
+
+					btCancelSeeking.Visible = false;
+					tspbProgress.Visible = false;
+					//lbParsing.Visible = false;
+
+					//lstAddresses.Enabled = true; 
+					clbAddresses.Enabled = true;
+					btNextPage.Enabled = true;
+					cbAllDirectories.Enabled = true;
+					cbNSFW.Enabled = true;
+					cbSketchy.Enabled = true;
+					cbFilterNotFound.Enabled = true;
+					cbShowDirectory.Enabled = true;
+
+					lbPager.Enabled = true;
+					nudPaging.Enabled = true;
+					lbSorting.Enabled = true;
+					ddSorting.Enabled = true;
+
+					this.UseWaitCursor = false;
+					this.WorkingSet = false;
+
+				} catch ( Exception exp ) {
+					this.Shell.AddErrors( exp );
 				}
-
-				btCancelSeeking.Visible = false;
-				tspbProgress.Visible = false;
-				//lbParsing.Visible = false;
-
-				//lstAddresses.Enabled = true; 
-				clbAddresses.Enabled = true;
-				btNextPage.Enabled = true;
-				cbAllDirectories.Enabled = true;
-				cbNSFW.Enabled = true;
-				cbSketchy.Enabled = true;
-				cbFilterNotFound.Enabled = true;
-				cbShowDirectory.Enabled = true;
-
-				lbPager.Enabled = true;
-				nudPaging.Enabled = true;
-				lbSorting.Enabled = true;
-				ddSorting.Enabled = true;
-
-				this.UseWaitCursor = false;
-				this.WorkingSet = false;
 			}
 		}
 		private string GetTimeRestFormatted ( TimeSpan time, int current, int maximum ) {
@@ -608,6 +639,7 @@ namespace AM.Desktop.Win {
 
 					await InsertImageToPanel( fil, TypeSourceEnum.Directory, null, "" );
 				}
+
 			}
 		}
 		private void ResizePictures () {
@@ -824,10 +856,22 @@ namespace AM.Desktop.Win {
 		private void ddLapsus_SelectedIndexChanged ( object sender, EventArgs e ) {
 			var kdkd = 3232;
 		}
+		private void tErrorSaving_Tick ( object sender, EventArgs e ) {
+			if ( this.Shell.ExistErrors ) {
+				this.Shell.SaveErrors();
+			}
+		}
 		private void tWallpaperLapsus_Tick ( object sender, EventArgs e ) {
 			if ( ChangeDesktopWallpaper() ) {
 				ActivateWallpaperLapsus();
 			}
+
+			if ( !this.Shell.IsNowDeleting && this.__optionCounter == 0 && this.Shell.ExistFileToDelete ) {
+				this.Shell.DeleteFiles();
+			}
+
+			++this.__optionCounter;
+			if ( this.__optionCounter >= 5 ) { this.__optionCounter = 0; }
 		}
 		private void tLapsusRevision_Tick ( object sender, EventArgs e ) {
 			if ( tWallpaperLapsus.Enabled ) {
@@ -839,13 +883,6 @@ namespace AM.Desktop.Win {
 
 				lbLapsusRest.Text = GetTimeFormatted( resting );
 			}
-
-			if ( !this.Shell.IsNowDeleting && this.__optionCounter == 0 && this.Shell.ExistFileToDelete ) {
-				this.Shell.DeleteFiles();
-			}
-
-			++this.__optionCounter;
-			if ( this.__optionCounter >= 5 ) { this.__optionCounter = 0; }
 		}
 
 		private async void flpPictures_Scroll ( object sender, ScrollEventArgs e ) {

@@ -34,6 +34,7 @@
 			this.flpPictures = new System.Windows.Forms.FlowLayoutPanel();
 			this.scPrincipal = new System.Windows.Forms.SplitContainer();
 			this.clbAddresses = new System.Windows.Forms.CheckedListBox();
+			this.picWallpaper = new System.Windows.Forms.PictureBox();
 			this.cbAllDirectories = new System.Windows.Forms.CheckBox();
 			this.lbColumn = new System.Windows.Forms.Label();
 			this.nudColumns = new System.Windows.Forms.NumericUpDown();
@@ -51,6 +52,9 @@
 			this.gbTools = new System.Windows.Forms.GroupBox();
 			this.btWarning = new System.Windows.Forms.Button();
 			this.gbWallpaperLapsus = new System.Windows.Forms.GroupBox();
+			this.lbRatio = new System.Windows.Forms.Label();
+			this.nudRatio = new System.Windows.Forms.NumericUpDown();
+			this.btDeleteWallpaper = new System.Windows.Forms.Button();
 			this.btNextWallpaper = new System.Windows.Forms.Button();
 			this.lbStyleDesktop = new System.Windows.Forms.Label();
 			this.ddStyleDesktop = new System.Windows.Forms.ComboBox();
@@ -77,26 +81,23 @@
 			this.picLogo = new System.Windows.Forms.PictureBox();
 			this.niDesktopWallpaper = new System.Windows.Forms.NotifyIcon(this.components);
 			this.cbSwitchWallpaper = new System.Windows.Forms.CheckBox();
-			this.picWallpaper = new System.Windows.Forms.PictureBox();
-			this.btDeleteWallpaper = new System.Windows.Forms.Button();
-			this.nudRatio = new System.Windows.Forms.NumericUpDown();
-			this.lbRatio = new System.Windows.Forms.Label();
+			this.tErrorSaving = new System.Windows.Forms.Timer(this.components);
 			this.cmsSources.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.scPrincipal)).BeginInit();
 			this.scPrincipal.Panel1.SuspendLayout();
 			this.scPrincipal.Panel2.SuspendLayout();
 			this.scPrincipal.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.picWallpaper)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudColumns)).BeginInit();
 			this.ssPrincipal.SuspendLayout();
 			this.gbTools.SuspendLayout();
 			this.gbWallpaperLapsus.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.nudRatio)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudWallpaperLapsus)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudPaging)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudMargin)).BeginInit();
 			this.cmsAdresses.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.picWallpaper)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.nudRatio)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// btSourceSelect
@@ -187,6 +188,14 @@
 			this.clbAddresses.SelectedIndexChanged += new System.EventHandler(this.clbAddresses_SelectedIndexChanged);
 			this.clbAddresses.MouseDown += new System.Windows.Forms.MouseEventHandler(this.clbAddresses_MouseDown);
 			this.clbAddresses.MouseUp += new System.Windows.Forms.MouseEventHandler(this.clbAddresses_MouseUp);
+			// 
+			// picWallpaper
+			// 
+			this.picWallpaper.Location = new System.Drawing.Point(7, 4);
+			this.picWallpaper.Name = "picWallpaper";
+			this.picWallpaper.Size = new System.Drawing.Size(337, 181);
+			this.picWallpaper.TabIndex = 6;
+			this.picWallpaper.TabStop = false;
 			// 
 			// cbAllDirectories
 			// 
@@ -385,6 +394,57 @@
 			this.gbWallpaperLapsus.TabIndex = 31;
 			this.gbWallpaperLapsus.TabStop = false;
 			this.gbWallpaperLapsus.Text = "Change Wallpaper";
+			// 
+			// lbRatio
+			// 
+			this.lbRatio.AutoSize = true;
+			this.lbRatio.Location = new System.Drawing.Point(116, 18);
+			this.lbRatio.Name = "lbRatio";
+			this.lbRatio.Size = new System.Drawing.Size(32, 13);
+			this.lbRatio.TabIndex = 38;
+			this.lbRatio.Text = "Ratio";
+			// 
+			// nudRatio
+			// 
+			this.nudRatio.DecimalPlaces = 2;
+			this.nudRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.nudRatio.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+			this.nudRatio.Location = new System.Drawing.Point(146, 16);
+			this.nudRatio.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+			this.nudRatio.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+			this.nudRatio.Name = "nudRatio";
+			this.nudRatio.Size = new System.Drawing.Size(43, 18);
+			this.nudRatio.TabIndex = 37;
+			this.nudRatio.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.nudRatio.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            65536});
+			// 
+			// btDeleteWallpaper
+			// 
+			this.btDeleteWallpaper.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btDeleteWallpaper.ForeColor = System.Drawing.Color.Red;
+			this.btDeleteWallpaper.Location = new System.Drawing.Point(71, 37);
+			this.btDeleteWallpaper.Name = "btDeleteWallpaper";
+			this.btDeleteWallpaper.Size = new System.Drawing.Size(32, 23);
+			this.btDeleteWallpaper.TabIndex = 36;
+			this.btDeleteWallpaper.Text = "Ø";
+			this.btDeleteWallpaper.UseVisualStyleBackColor = true;
+			this.btDeleteWallpaper.Click += new System.EventHandler(this.btDeleteWallpaper_Click);
 			// 
 			// btNextWallpaper
 			// 
@@ -656,64 +716,11 @@
 			this.cbSwitchWallpaper.UseVisualStyleBackColor = true;
 			this.cbSwitchWallpaper.CheckedChanged += new System.EventHandler(this.cbSwitchWallpaper_CheckedChanged);
 			// 
-			// picWallpaper
+			// tErrorSaving
 			// 
-			this.picWallpaper.Location = new System.Drawing.Point(7, 4);
-			this.picWallpaper.Name = "picWallpaper";
-			this.picWallpaper.Size = new System.Drawing.Size(337, 181);
-			this.picWallpaper.TabIndex = 6;
-			this.picWallpaper.TabStop = false;
-			// 
-			// btDeleteWallpaper
-			// 
-			this.btDeleteWallpaper.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btDeleteWallpaper.ForeColor = System.Drawing.Color.Red;
-			this.btDeleteWallpaper.Location = new System.Drawing.Point(71, 37);
-			this.btDeleteWallpaper.Name = "btDeleteWallpaper";
-			this.btDeleteWallpaper.Size = new System.Drawing.Size(32, 23);
-			this.btDeleteWallpaper.TabIndex = 36;
-			this.btDeleteWallpaper.Text = "Ø";
-			this.btDeleteWallpaper.UseVisualStyleBackColor = true;
-			this.btDeleteWallpaper.Click += new System.EventHandler(this.btDeleteWallpaper_Click);
-			// 
-			// nudRatio
-			// 
-			this.nudRatio.DecimalPlaces = 2;
-			this.nudRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.nudRatio.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-			this.nudRatio.Location = new System.Drawing.Point(146, 16);
-			this.nudRatio.Maximum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-			this.nudRatio.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-			this.nudRatio.Name = "nudRatio";
-			this.nudRatio.Size = new System.Drawing.Size(43, 18);
-			this.nudRatio.TabIndex = 37;
-			this.nudRatio.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			this.nudRatio.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            65536});
-			// 
-			// lbRatio
-			// 
-			this.lbRatio.AutoSize = true;
-			this.lbRatio.Location = new System.Drawing.Point(116, 18);
-			this.lbRatio.Name = "lbRatio";
-			this.lbRatio.Size = new System.Drawing.Size(32, 13);
-			this.lbRatio.TabIndex = 38;
-			this.lbRatio.Text = "Ratio";
+			this.tErrorSaving.Enabled = true;
+			this.tErrorSaving.Interval = 30000;
+			this.tErrorSaving.Tick += new System.EventHandler(this.tErrorSaving_Tick);
 			// 
 			// frmDesktop
 			// 
@@ -734,6 +741,7 @@
 			this.scPrincipal.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.scPrincipal)).EndInit();
 			this.scPrincipal.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.picWallpaper)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudColumns)).EndInit();
 			this.ssPrincipal.ResumeLayout(false);
 			this.ssPrincipal.PerformLayout();
@@ -741,13 +749,12 @@
 			this.gbTools.PerformLayout();
 			this.gbWallpaperLapsus.ResumeLayout(false);
 			this.gbWallpaperLapsus.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.nudRatio)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudWallpaperLapsus)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudPaging)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudMargin)).EndInit();
 			this.cmsAdresses.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.picLogo)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.picWallpaper)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.nudRatio)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -811,5 +818,6 @@
 		private System.Windows.Forms.Button btDeleteWallpaper;
 		private System.Windows.Forms.Label lbRatio;
 		private System.Windows.Forms.NumericUpDown nudRatio;
+		private System.Windows.Forms.Timer tErrorSaving;
 	}
 }
